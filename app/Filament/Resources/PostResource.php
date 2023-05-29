@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 use Filament\Resources\Form;
 use Filament\Resources\Table;
 use Filament\Resources\Resource;
+use Filament\Forms\Components\Grid;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\PostResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -27,7 +28,12 @@ class PostResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('title')
+
+                Forms\Components\Card::make()
+                ->schema([
+                    Grid::make(2)
+    ->schema([
+        Forms\Components\TextInput::make('title')
                     ->required()
                     ->reactive()
                     ->afterStateUpdated(function(Closure $set, $state){
@@ -37,18 +43,26 @@ class PostResource extends Resource
                 Forms\Components\TextInput::make('slug')
                     ->required()
                     ->maxLength(2048),
-                Forms\Components\TextInput::make('thumnail')
-                    ->maxLength(2048),
-                Forms\Components\Textarea::make('body')
+    ]),
+                    
+           
+                Forms\Components\RichEditor::make('body')
                     ->required(),
                 Forms\Components\Toggle::make('active')
                     ->required(),
                 Forms\Components\DateTimePicker::make('published_at')
                     ->required(),
-                Forms\Components\Select::make('user_id')
-                ->relationship('user', 'email')
+               
+                ])->columnSpan(8),
+                Forms\Components\Card::make()
+                ->schema([
+                    Forms\Components\FileUpload::make('thumnail'),
+                    Forms\Components\Select::make('category_id')
+                    ->relationship('categories', 'title')
+                    ->multiple()
                     ->required(),
-            ]);
+                ])->columnSpan(4)
+            ])->columns(12);
     }
 
     public static function table(Table $table): Table
@@ -57,14 +71,10 @@ class PostResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('title'),
                 Tables\Columns\TextColumn::make('slug'),
-                Tables\Columns\TextColumn::make('thumnail'),
-                Tables\Columns\TextColumn::make('body'),
+                Tables\Columns\ImageColumn::make('thumbnail'),
                 Tables\Columns\IconColumn::make('active')
                     ->boolean(),
                 Tables\Columns\TextColumn::make('published_at')
-                    ->dateTime(),
-                Tables\Columns\TextColumn::make('user_id'),
-                Tables\Columns\TextColumn::make('created_at')
                     ->dateTime(),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime(),
