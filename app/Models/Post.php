@@ -20,4 +20,9 @@ class Post extends Model
     {
         return $this->belongsToMany(Category::class);
     }
+
+    public function shortBody()
+    {
+        Str::words(strip_tags($this->body), 30, '...');
+    }
 }
