@@ -1,5 +1,5 @@
 <?php 
-  /**  @var $posts \Illuminate\Pagination\LengthAwarePaginator */
+  /**  @var $posts \Illuminate\Pagination\LengthAwarePaginator */ 
 ?>
 
 <x-app-layout>
@@ -15,5 +15,7 @@
 
 
 </section>
+
+  <x-sidebar/>
 </x-app-layout>
  
