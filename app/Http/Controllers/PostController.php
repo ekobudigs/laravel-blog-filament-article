@@ -23,6 +23,7 @@ class PostController extends Controller
         //         ->orderBy('published_at', 'desc')
         //         ->paginate(2);
 
+        dd('ok');
 
         $latestPost = Post::where('active', '=', 1)
         ->whereDate('published_at', '<', Carbon::now())
