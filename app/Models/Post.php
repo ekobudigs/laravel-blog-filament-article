@@ -2,15 +2,17 @@
 
 namespace App\Models;
 
+
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Post extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'slug', 'thumnail', 'body', 'active', 'published_at', 'user_id'];
+    protected $fillable = ['title', 'slug', 'thumnail', 'body', 'active', 'published_at', 'user_id', 'meta_title', 'meta_description'];
 
     protected $casts = [
         'published_at' => 'datetime'
@@ -25,9 +27,9 @@ class Post extends Model
         return $this->belongsToMany(Category::class);
     }
 
-    public function shortBody()
+    public function shortBody($words = 30)
     {
-      return  Str::words(strip_tags($this->body), 30);
+      return  Str::words(strip_tags($this->body), $words);
     }
 
     public function getFormattedDate()
@@ -42,5 +44,18 @@ class Post extends Model
         }
 
         return '/storage/' . $this->thumnail;
+    }
+
+    public function humanReadTime(): Attribute
+    {
+        return new Attribute(
+            get: function($value, $attributes){
+                $words = Str::wordCount(strip_tags($attributes['body']));
+                $minutes = ceil($words /200);
+
+                return $minutes . ' ' . str('min')->plural($minutes) . ', '
+                . $words . ' ' . str('words')->plural($words);
+            }
+        );
     }
 }
